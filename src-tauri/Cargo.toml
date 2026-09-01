@@ -1,0 +1,82 @@
+[package]
+name = "scarlettt"
+version = "0.1.0"
+description = "A Tauri App"
+authors = ["you"]
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+# The `_lib` suffix may seem redundant but it is necessary
+# to make the lib name unique and wouldn't conflict with the bin name.
+# This seems to be only an issue on Windows, see https://github.com/rust-lang/cargo/issues/8519
+name = "tauri_app_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+# Capitalised to match productName in tauri.conf.json. During `tauri dev` there's
+# no .app bundle, so macOS shows the running executable's name in the menu bar —
+# meaning the binary has to be capitalised too, not just productName.
+[[bin]]
+# `scarlettt-local`, NOT `Scarlettt` — see the "App name" section of CLAUDE.md.
+# In `tauri dev` there is no bundle, so macOS takes the menu-bar name straight from
+# this executable; naming it the same as the shipped app made a stale
+# `target/release/bundle/.../Scarlettt.app` indistinguishable from the build you are
+# actually editing. One was launched by accident and its old UI was mistaken for the
+# dev build's for half an hour.
+name = "scarlettt-local"
+path = "src/main.rs"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-opener = "2"
+tauri-plugin-dialog = "2"
+tauri-plugin-fs = "2"
+# Native macOS notifications, for telling the user a reply landed while they were
+# in another app. Local notifications, not APNs — nothing leaves the machine.
+tauri-plugin-notification = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+reqwest = { version = "0.11", features = ["json", "stream"] }
+tokio = { version = "1", features = ["full"] }
+futures = "0.3"
+rusqlite = { version = "0.32", features = ["bundled"] }
+uuid = { version = "1.11", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+scraper = "0.19.0"
+# HTML -> GFM markdown for scraped model readmes. Turndown-inspired, pure Rust,
+# and the reason readme tables and code blocks survive the trip.
+htmd = "0.5"
+env_logger = "0.10.0"
+log = "0.4"
+which = "8.0.0"
+zstd = "0.13"
+tar = "0.4"
+zip = "2.0"
+flate2 = "1.0"
+sysinfo = "0.32"
+# MCP (Model Context Protocol) client — Scarlettt as a *host* that lets the local
+# model call tools exposed by MCP servers. Only the client half is used; we never
+# expose Scarlettt as a server. `transport-child-process` is the stdio transport
+# that spawns and supervises a local server (the offline-capable, primary case);
+# the streamable-HTTP transport is here for the remote-server follow-on and stays
+# gated off while offline. See `src/mcp.rs`.
+rmcp = { version = "3.1.4", features = [
+    "client",
+    "transport-child-process",
+    "transport-streamable-http-client-reqwest",
+] }
+# macOS Keychain, for MCP server secrets (auth tokens in env / headers). Values
+# live here, never in mcp_servers.json. `apple-native` selects the real system
+# Keychain rather than the in-memory mock. See `src/mcp.rs`.
+keyring = { version = "3.6.3", features = ["apple-native"] }
+# For building HeaderName/HeaderValue for a remote MCP server's custom headers.
+# Pinned to 1.x so it unifies with rmcp's http types (our reqwest 0.11 uses the
+# older http 0.2, a separate instance — this is deliberately the newer one).
+http = "1"
+
+

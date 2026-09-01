@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scarlett AI</title>
+    <!-- Inter is vendored in src/css/index.css. Don't reintroduce a Google Fonts
+         <link> here: it's an outbound request offline mode can't intercept. -->
+    <!-- Paint the right theme before React mounts, or a dark-theme user sees a white
+         flash on every cold start. Reads the same persisted setting `useTheme` does
+         and resolves `auto` against the OS; `useTheme` takes over once React runs.
+         Defaults to light and never throws, so a blocked/empty localStorage is fine. -->
+    <script>
+      (function () {
+        try {
+          var s = JSON.parse(localStorage.getItem("scarlettt_settings") || "{}");
+          var pref = s.theme || "auto";
+          var dark = pref === "dark" || (pref === "auto" &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches);
+          document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
+        } catch (e) {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script>
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,43 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.claude/settings.local.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# A clone of this repo was made inside itself; git would otherwise stage it
+# as a broken gitlink on every `git add -A`.
+/scarlettt/
+
+# Apple signing/notarization credentials must never be committed.
+*.p8
+*.p12
+*.certSigningRequest
+
+# Tauri updater signing keys — private key must never be committed
+.tauri-keys/
+src-tauri/.tauri-keys/
+*.key
+
+# Bundled Ollama runtime binaries are large build artifacts, not source. The app
+# downloads and manages its own Ollama at runtime, so these must not be committed.
+src-tauri/binaries/ollama-*
